@@ -181,7 +181,29 @@ mobile/
 
 # 🚀 Getting Started
 
-Project setup instructions will be added after the initial project scaffold is generated.
+## Frontend
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+## Backend
+
+```bash
+cd server
+npm install
+node server.js
+```
+
+## Mobile
+
+```bash
+cd mobile
+npm install
+npm start
+```
 
 ---
 
