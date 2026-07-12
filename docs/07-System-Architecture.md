@@ -27,32 +27,32 @@ SevaFlow follows a three-tier architecture:
 3. Data Layer
 
 ```
-+----------------------------------------------------+
-|                Presentation Layer                  |
-|                                                    |
-| React + Vite + Tailwind + ShadCN UI               |
-+--------------------------▲-------------------------+
-                           │
-                    REST APIs + Socket.IO
-                           │
-+--------------------------▼-------------------------+
-|                Application Layer                  |
-|                                                    |
-| Express.js APIs                                   |
-| Authentication                                    |
-| Queue Engine                                      |
-| AI Services                                       |
-| Notification Service                              |
-| Business Logic                                    |
-+--------------------------▲-------------------------+
-                           │
-                           │
-+--------------------------▼-------------------------+
-|                   Data Layer                      |
-|                                                    |
-| MongoDB Atlas                                     |
-| Cloudinary                                        |
-+----------------------------------------------------+
+## High-Level Architecture Diagram
+
+```mermaid
+graph TD
+
+A[Citizen] --> B[React Frontend]
+
+B --> C[Express Backend]
+
+C --> D[Authentication Module]
+C --> E[Appointment Module]
+C --> F[Queue Module]
+C --> G[Document Module]
+C --> H[AI Module]
+C --> I[Notification Module]
+
+D --> J[(MongoDB Atlas)]
+E --> J
+F --> J
+G --> K[Cloudinary]
+H --> L[AI Services]
+
+F --> M[Socket.IO]
+
+M --> B
+```
 ```
 
 ---
@@ -73,36 +73,72 @@ SevaFlow follows a three-tier architecture:
 | Real-Time | Socket.IO |
 | Charts | Recharts |
 
+
+## Technology Architecture Diagram
+
+```mermaid
+graph LR
+
+A[React + Vite]
+
+B[Tailwind CSS]
+
+C[ShadCN UI]
+
+D[Express.js]
+
+E[Node.js]
+
+F[(MongoDB Atlas)]
+
+G[Cloudinary]
+
+H[Socket.IO]
+
+I[JWT Authentication]
+
+J[AI Services]
+
+A --> D
+
+D --> F
+
+D --> G
+
+D --> H
+
+D --> I
+
+D --> J
+```
 ---
 
 # 4. High-Level System Flow
 
-```
-Citizen
+## Request Flow Diagram
 
-↓
+```mermaid
+sequenceDiagram
 
-React Web Application
+participant Citizen
 
-↓
+participant React
 
-Express API Server
+participant Express
 
-↓
+participant MongoDB
 
-Authentication Middleware
+Citizen->>React: Login
 
-↓
+React->>Express: API Request
 
-Business Logic
+Express->>MongoDB: Validate User
 
-↓
+MongoDB-->>Express: User Data
 
-MongoDB Database
+Express-->>React: JWT Token
 
-↓
-
-Response Returned to Client
+React-->>Citizen: Dashboard
 ```
 
 ---
@@ -124,6 +160,40 @@ The system consists of the following independent modules:
 - Administration Module
 
 Each module is independently maintainable and communicates through well-defined APIs.
+
+## Module Dependency Diagram
+
+```mermaid
+graph TD
+
+Authentication
+
+Citizen
+
+Appointments
+
+Queue
+
+Documents
+
+Notifications
+
+AI
+
+Analytics
+
+Authentication --> Citizen
+
+Citizen --> Appointments
+
+Appointments --> Queue
+
+Queue --> Notifications
+
+Documents --> AI
+
+Queue --> Analytics
+```
 
 ---
 
@@ -191,6 +261,26 @@ Service Completed
 ↓
 
 Queue Updated
+```
+
+## Queue Lifecycle
+
+```mermaid
+stateDiagram-v2
+
+[*] --> AppointmentBooked
+
+AppointmentBooked --> QueueJoined
+
+QueueJoined --> Waiting
+
+Waiting --> Called
+
+Called --> InService
+
+InService --> Completed
+
+Completed --> [*]
 ```
 
 ---
@@ -269,6 +359,34 @@ Recommendations
 Response Returned
 ```
 
+## AI Processing Flow
+
+```mermaid
+flowchart TD
+
+Upload
+
+AI
+
+Ready
+
+Reject
+
+Officer
+
+Citizen uploads document --> Upload
+
+Upload --> AI
+
+AI --> Ready
+
+AI --> Reject
+
+Ready --> Officer
+
+Reject --> Citizen uploads document
+```
+
 ---
 
 # 11. Database Communication
@@ -341,7 +459,39 @@ The architecture allows future integration of:
 - Digital Payments
 - WhatsApp Notifications
 
+
 ---
+# Deployment Architecture
+
+```mermaid
+graph TD
+
+User
+
+Internet
+
+Frontend
+
+Backend
+
+Database
+
+Cloudinary
+
+AI
+
+User --> Internet
+
+Internet --> Frontend
+
+Frontend --> Backend
+
+Backend --> Database
+
+Backend --> Cloudinary
+
+Backend --> AI
+```
 
 # 15. Conclusion
 
