@@ -364,27 +364,19 @@ Response Returned
 ```mermaid
 flowchart TD
 
-Upload
+A[Citizen Uploads Document]
+B[Store Document]
+C[AI Document Analysis]
+D[Document Ready]
+E[Document Rejected]
+F[Officer Verification]
 
-AI
-
-Ready
-
-Reject
-
-Officer
-
-Citizen uploads document --> Upload
-
-Upload --> AI
-
-AI --> Ready
-
-AI --> Reject
-
-Ready --> Officer
-
-Reject --> Citizen uploads document
+A --> B
+B --> C
+C --> D
+C --> E
+D --> F
+E --> A
 ```
 
 ---
