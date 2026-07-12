@@ -1,46 +1,68 @@
 import { Link } from 'react-router-dom'
-import { BookOpen, Globe2, MessageCircle, Send } from 'lucide-react'
+import { BookOpen, Globe2, Mail, MessageCircle } from 'lucide-react'
 import { Container } from './container'
 
-const footerLinks = [
+const platformLinks = [
+  { label: 'Home', to: '/' },
+  { label: 'Features', to: '/#features' },
+  { label: 'How it Works', to: '/#how-it-works' },
+  { label: 'FAQ', to: '/#faq' },
+]
+
+const resourceLinks = [
   { label: 'About', to: '/about' },
   { label: 'Contact', to: '/contact' },
   { label: 'Privacy Policy', to: '/privacy' },
   { label: 'Terms & Conditions', to: '/terms' },
 ]
 
-const socialLinks = [
+const connectLinks = [
   { label: 'GitHub', icon: Globe2, href: 'https://github.com' },
-  { label: 'Twitter', icon: Send, href: 'https://twitter.com' },
   { label: 'LinkedIn', icon: MessageCircle, href: 'https://linkedin.com' },
-  { label: 'Instagram', icon: BookOpen, href: 'https://instagram.com' },
+  { label: 'Email', icon: Mail, href: 'mailto:hello@sevaflow.com' },
+  { label: 'Docs', icon: BookOpen, href: '/about' },
 ]
 
 export function Footer() {
   return (
-    <footer className="border-t border-slate-200 bg-white/80 py-8 dark:border-slate-800 dark:bg-slate-950/80">
-      <Container className="flex flex-col gap-8 text-sm text-slate-500">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-          <div className="max-w-md space-y-2">
-            <p className="text-base font-semibold text-slate-900 dark:text-slate-100">SevaFlow</p>
-            <p>Modern digital services for citizens and government teams.</p>
-          </div>
-          <div className="flex flex-wrap gap-4">
-            {footerLinks.map((link) => (
+    <footer className="mt-10 border-t border-slate-200 bg-white/80 py-10 dark:border-slate-800 dark:bg-slate-950/80">
+      <Container className="grid gap-8 text-sm text-slate-500 md:grid-cols-2 xl:grid-cols-4">
+        <div className="space-y-3">
+          <p className="text-base font-semibold text-slate-900 dark:text-slate-100">SevaFlow</p>
+          <p className="max-w-xs leading-7">Premium digital experiences for modern public service delivery.</p>
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-700 dark:text-slate-300">Platform</p>
+          <div className="flex flex-col gap-2">
+            {platformLinks.map((link) => (
               <Link key={link.label} to={link.to} className="transition-colors hover:text-blue-600">
                 {link.label}
               </Link>
             ))}
           </div>
         </div>
-        <div className="flex flex-col gap-4 border-t border-slate-200 pt-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2026 SevaFlow. Public service experiences, reimagined.</p>
-          <div className="flex flex-wrap items-center gap-3">
-            {socialLinks.map((item) => {
+
+        <div className="space-y-3">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-700 dark:text-slate-300">Resources</p>
+          <div className="flex flex-col gap-2">
+            {resourceLinks.map((link) => (
+              <Link key={link.label} to={link.to} className="transition-colors hover:text-blue-600">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-slate-700 dark:text-slate-300">Connect</p>
+          <div className="flex flex-col gap-2">
+            {connectLinks.map((item) => {
               const Icon = item.icon
               return (
-                <a key={item.label} href={item.href} target="_blank" rel="noreferrer" className="rounded-full border border-slate-200 p-2 transition-colors hover:border-blue-500 hover:text-blue-600 dark:border-slate-800">
+                <a key={item.label} href={item.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 transition-colors hover:text-blue-600">
                   <Icon className="h-4 w-4" />
+                  <span>{item.label}</span>
                 </a>
               )
             })}
