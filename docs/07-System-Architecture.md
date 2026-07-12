@@ -18,10 +18,9 @@ The architecture follows a modular client-server design, ensuring scalability, m
 
 ---
 
-````markdown
 # 2. Architecture Overview
 
-SevaFlow follows a three-tier architecture:
+SevaFlow follows a modern three-tier architecture consisting of:
 
 1. Presentation Layer
 2. Application Layer
@@ -30,31 +29,48 @@ SevaFlow follows a three-tier architecture:
 ## High-Level Architecture Diagram
 
 ```mermaid
-graph TD
+flowchart TD
 
-A[Citizen] --> B[React Frontend]
-B --> C[Express Backend]
+Citizen([Citizen])
 
-C --> D[Authentication Module]
-C --> E[Appointment Module]
-C --> F[Queue Module]
-C --> G[Document Module]
-C --> H[AI Module]
-C --> I[Notification Module]
+Frontend["React + Vite<br/>Tailwind CSS<br/>ShadCN UI"]
 
-D --> J[(MongoDB Atlas)]
-E --> J
-F --> J
-G --> K[Cloudinary]
-H --> L[AI Services]
+Backend["Node.js + Express.js"]
 
-F --> M[Socket.IO]
+Auth["Authentication Module"]
+Appointment["Appointment Module"]
+Queue["Queue Module"]
+Documents["Document Module"]
+AI["AI Module"]
+Notification["Notification Module"]
 
-M --> B
+Mongo[("MongoDB Atlas")]
+Cloud["Cloudinary"]
+Socket["Socket.IO"]
+
+Citizen --> Frontend
+Frontend --> Backend
+
+Backend --> Auth
+Backend --> Appointment
+Backend --> Queue
+Backend --> Documents
+Backend --> AI
+Backend --> Notification
+
+Auth --> Mongo
+Appointment --> Mongo
+Queue --> Mongo
+Documents --> Mongo
+
+Documents --> Cloud
+Queue --> Socket
+
+Socket --> Frontend
+```
 
 ---
 
-````markdown
 # 3. Technology Stack
 
 | Layer | Technology |
@@ -77,10 +93,11 @@ M --> B
 graph LR
 
 A["React + Vite"] --> D["Express.js"]
+
 B["Tailwind CSS"] --> A
 C["ShadCN UI"] --> A
 
-D --> E["Node.js"]
+D --> E["Node.js Runtime"]
 D --> F[("MongoDB Atlas")]
 D --> G["Cloudinary"]
 D --> H["Socket.IO"]
@@ -92,37 +109,31 @@ D --> J["AI Services"]
 
 # 4. High-Level System Flow
 
+The following diagram illustrates how a request travels through the SevaFlow platform.
+
 ## Request Flow Diagram
 
 ```mermaid
 sequenceDiagram
 
 participant Citizen
+participant Frontend
+participant Backend
+participant Database
 
-participant React
-
-participant Express
-
-participant MongoDB
-
-Citizen->>React: Login
-
-React->>Express: API Request
-
-Express->>MongoDB: Validate User
-
-MongoDB-->>Express: User Data
-
-Express-->>React: JWT Token
-
-React-->>Citizen: Dashboard
+Citizen->>Frontend: Login / Action
+Frontend->>Backend: REST API Request
+Backend->>Database: Read / Write Data
+Database-->>Backend: Response
+Backend-->>Frontend: JSON Response
+Frontend-->>Citizen: Updated UI
 ```
 
 ---
 
 # 5. Module Architecture
 
-The system consists of the following independent modules:
+The system consists of independent and reusable modules.
 
 - Authentication Module
 - User Management Module
@@ -136,39 +147,27 @@ The system consists of the following independent modules:
 - Analytics Module
 - Administration Module
 
-Each module is independently maintainable and communicates through well-defined APIs.
+Each module communicates through secured REST APIs and follows a modular architecture.
 
 ## Module Dependency Diagram
 
 ```mermaid
 graph TD
 
-Authentication
+Authentication["Authentication"]
+Users["User Management"]
+Appointments["Appointments"]
+Queue["Queue"]
+Documents["Documents"]
+Notifications["Notifications"]
+AI["AI"]
+Analytics["Analytics"]
 
-Citizen
-
-Appointments
-
-Queue
-
-Documents
-
-Notifications
-
-AI
-
-Analytics
-
-Authentication --> Citizen
-
-Citizen --> Appointments
-
+Authentication --> Users
+Users --> Appointments
 Appointments --> Queue
-
 Queue --> Notifications
-
 Documents --> AI
-
 Queue --> Analytics
 ```
 
@@ -176,68 +175,52 @@ Queue --> Analytics
 
 # 6. Authentication Flow
 
-```
-Login
+Authentication is implemented using JWT Access Tokens and Refresh Tokens.
 
-↓
+```mermaid
+flowchart TD
 
-Validate Credentials
+A[User Login]
+B[Validate Credentials]
+C[Generate Access Token]
+D[Generate Refresh Token]
+E[Store Refresh Token]
+F[Return Tokens]
+G[Access Protected Routes]
+H[Refresh Access Token]
 
-↓
-
-Generate Access Token
-
-↓
-
-Generate Refresh Token
-
-↓
-
-Store Refresh Token
-
-↓
-
-Return Tokens
-
-↓
-
-Protected Routes
-
-↓
-
-Token Refresh (When Required)
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
+G --> H
 ```
 
 ---
 
 # 7. Queue Management Flow
 
-```
-Book Appointment
+The Queue Management Engine handles appointments, token generation, and real-time updates.
 
-↓
+```mermaid
+flowchart TD
 
-Generate Queue Token
+A[Book Appointment]
+B[Generate Queue Token]
+C[Join Queue]
+D[Real-Time Updates]
+E[Officer Calls Citizen]
+F[Service Completed]
+G[Queue Updated]
 
-↓
-
-Join Queue
-
-↓
-
-Real-Time Updates
-
-↓
-
-Officer Calls Citizen
-
-↓
-
-Service Completed
-
-↓
-
-Queue Updated
+A --> B
+B --> C
+C --> D
+D --> E
+E --> F
+F --> G
 ```
 
 ## Queue Lifecycle
@@ -246,17 +229,11 @@ Queue Updated
 stateDiagram-v2
 
 [*] --> AppointmentBooked
-
 AppointmentBooked --> QueueJoined
-
 QueueJoined --> Waiting
-
 Waiting --> Called
-
 Called --> InService
-
 InService --> Completed
-
 Completed --> [*]
 ```
 
@@ -264,206 +241,235 @@ Completed --> [*]
 
 # 8. Document Flow
 
-```
-Citizen Uploads Document
+The Document Management module allows citizens to upload required documents before visiting the government office. Uploaded documents are securely stored in Cloudinary and can be verified by officers after AI-based pre-validation.
 
-↓
+```mermaid
+flowchart TD
 
-Cloudinary Storage
+A[Citizen Uploads Document]
+B[Upload to Cloudinary]
+C[Store Metadata in MongoDB]
+D[AI Document Readiness Check]
+E{Document Valid?}
+F[Officer Verification]
+G[Citizen Re-upload]
 
-↓
-
-Document Metadata Stored
-
-↓
-
-AI Readiness Check
-
-↓
-
-Officer Verification
-
-↓
-
-Approval / Rejection
+A --> B
+B --> C
+C --> D
+D --> E
+E -- Yes --> F
+E -- No --> G
+G --> A
 ```
 
 ---
 
 # 9. Notification Flow
 
-```
-Appointment Booked
+The Notification Module ensures that citizens remain informed throughout their service journey using Socket.IO for real-time updates.
 
-↓
+```mermaid
+sequenceDiagram
 
-Notification Service
+participant Citizen
+participant Frontend
+participant Backend
+participant Socket
+participant Officer
 
-↓
-
-Socket.IO
-
-↓
-
-Citizen Dashboard
-
-↓
-
-Browser Notification
+Officer->>Backend: Update Queue
+Backend->>Socket: Emit Queue Event
+Socket-->>Frontend: Live Queue Update
+Frontend-->>Citizen: Show Notification
 ```
 
 ---
 
 # 10. AI Service Flow
 
-```
-Citizen Request
+SevaFlow integrates AI services to improve document verification, answer citizen queries, and provide intelligent recommendations.
 
-↓
+```mermaid
+flowchart TD
 
-AI Processing
+A[Citizen Request]
+B[AI Processing]
+C{Request Type}
 
-↓
+D[Document Analysis]
+E[AI Chat Assistant]
+F[Queue Prediction]
+G[Best Visiting Time]
+H[Response Returned]
 
-Document Analysis
+A --> B
+B --> C
 
-↓
+C --> D
+C --> E
+C --> F
+C --> G
 
-Recommendations
-
-↓
-
-Response Returned
+D --> H
+E --> H
+F --> H
+G --> H
 ```
 
 ## AI Processing Flow
 
 ```mermaid
-flowchart TD
+flowchart LR
 
 A[Citizen Uploads Document]
-B[Store Document]
-C[AI Document Analysis]
-D[Document Ready]
-E[Document Rejected]
-F[Officer Verification]
+B[Cloudinary Storage]
+C[AI Validation]
+D{Ready?}
+E[Officer Verification]
+F[Citizen Upload Again]
 
 A --> B
 B --> C
 C --> D
-C --> E
-D --> F
-E --> A
+D -- Yes --> E
+D -- No --> F
 ```
 
 ---
 
 # 11. Database Communication
 
-All data interactions follow this sequence:
+Every request follows a layered architecture to keep the codebase modular and maintainable.
 
-```
-Frontend
+```mermaid
+flowchart LR
 
-↓
+A[React Frontend]
+B[Express Route]
+C[Controller]
+D[Service Layer]
+E[(MongoDB Atlas)]
 
-Express Route
-
-↓
-
-Controller
-
-↓
-
-Service
-
-↓
-
-MongoDB
-
-↓
-
-Response
+A --> B
+B --> C
+C --> D
+D --> E
+E --> D
+D --> C
+C --> B
+B --> A
 ```
 
 ---
 
 # 12. Security Architecture
 
-Security mechanisms include:
+Security is implemented at multiple levels of the application.
 
 - JWT Authentication
 - Refresh Tokens
-- Password Hashing
-- Protected Routes
+- bcrypt Password Hashing
+- Protected APIs
 - Role-Based Access Control
 - Secure File Upload
 - Input Validation
 - Rate Limiting
+- Helmet Middleware
+- CORS Protection
+
+## Security Flow
+
+```mermaid
+flowchart TD
+
+A[Login Request]
+B[Validate Credentials]
+C[Generate JWT]
+D[Access Protected Route]
+E{Token Valid?}
+F[Allow Access]
+G[Return Unauthorized]
+
+A --> B
+B --> C
+C --> D
+D --> E
+E -- Yes --> F
+E -- No --> G
+```
 
 ---
 
 # 13. Scalability Considerations
 
-The architecture is designed to support:
+The architecture is designed to support future expansion without major structural changes.
 
-- Multiple government departments
-- Multiple offices
-- Thousands of concurrent users
-- Additional AI services
-- Future mobile application
-- Cloud deployment
+- Multiple Government Departments
+- Multiple Offices
+- Thousands of Concurrent Users
+- Cloud Deployment
+- Horizontal Backend Scaling
+- AI Service Expansion
+- Mobile Application Support
+- Future Microservices Migration
 
 ---
 
 # 14. Future Expansion
 
-The architecture allows future integration of:
+The modular architecture allows seamless integration of future technologies.
 
-- React Native Mobile App
-- DigiLocker
+- React Native Mobile Application
+- DigiLocker Integration
 - Government APIs
-- OCR Services
+- OCR-Based Document Verification
 - AI Recommendation Engine
 - Digital Payments
 - WhatsApp Notifications
+- SMS Notifications
+- Voice Assistant
+- Multilingual Support
 
-
----
-# Deployment Architecture
+## Deployment Architecture
 
 ```mermaid
-graph TD
+flowchart TD
 
-User
+User[Citizen]
 
-Internet
+Browser[Web Browser]
 
-Frontend
+Frontend[React Application]
 
-Backend
+Backend[Express API Server]
 
-Database
+Mongo[(MongoDB Atlas)]
 
-Cloudinary
+Cloudinary[Cloudinary]
 
-AI
+AI[AI Services]
 
-User --> Internet
+Socket[Socket.IO Server]
 
-Internet --> Frontend
-
+User --> Browser
+Browser --> Frontend
 Frontend --> Backend
 
-Backend --> Database
-
+Backend --> Mongo
 Backend --> Cloudinary
-
 Backend --> AI
+Backend --> Socket
+
+Socket --> Frontend
 ```
+
+---
 
 # 15. Conclusion
 
-The modular architecture of SevaFlow ensures that each component remains independent, scalable, and maintainable.
+The architecture of **SevaFlow** follows a modular, scalable, and secure client-server model that separates presentation, business logic, and data storage into independent layers.
 
-This design enables rapid development, simplified testing, and seamless future enhancements while providing a secure and efficient platform for citizen service management.
+By integrating **React**, **Node.js**, **Express.js**, **MongoDB Atlas**, **Socket.IO**, **Cloudinary**, and **AI-powered services**, the platform provides a robust foundation for digital government service delivery.
+
+The modular design simplifies development, testing, deployment, and future enhancements while ensuring maintainability and scalability as the platform grows to support additional government departments, mobile applications, and intelligent automation.
