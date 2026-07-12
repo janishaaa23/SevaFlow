@@ -6,6 +6,9 @@ import { DashboardLayout } from '@/layouts/dashboard-layout'
 import { LandingPage } from '@/pages/public/landing'
 import { LoginPage } from '@/pages/public/login'
 import { RegisterPage } from '@/pages/public/register'
+import { ForgotPasswordPage } from '@/pages/public/forgot-password'
+import { VerifyEmailPage } from '@/pages/public/verify-email'
+import { ResetPasswordPage } from '@/pages/public/reset-password'
 import { AboutPage } from '@/pages/public/about'
 import { ContactPage } from '@/pages/public/contact'
 import { PrivacyPolicyPage } from '@/pages/public/privacy-policy'
@@ -36,6 +39,9 @@ export const router = createBrowserRouter([
       { index: true, element: <LandingPage /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'register', element: <RegisterPage /> },
+      { path: 'forgot-password', element: <ForgotPasswordPage /> },
+      { path: 'verify-email', element: <VerifyEmailPage /> },
+      { path: 'reset-password', element: <ResetPasswordPage /> },
       { path: 'about', element: <AboutPage /> },
       { path: 'contact', element: <ContactPage /> },
       { path: 'privacy', element: <PrivacyPolicyPage /> },
