@@ -18,6 +18,7 @@ The architecture follows a modular client-server design, ensuring scalability, m
 
 ---
 
+````markdown
 # 2. Architecture Overview
 
 SevaFlow follows a three-tier architecture:
@@ -26,14 +27,12 @@ SevaFlow follows a three-tier architecture:
 2. Application Layer
 3. Data Layer
 
-```
 ## High-Level Architecture Diagram
 
 ```mermaid
 graph TD
 
 A[Citizen] --> B[React Frontend]
-
 B --> C[Express Backend]
 
 C --> D[Authentication Module]
@@ -52,11 +51,10 @@ H --> L[AI Services]
 F --> M[Socket.IO]
 
 M --> B
-```
-```
 
 ---
 
+````markdown
 # 3. Technology Stack
 
 | Layer | Technology |
@@ -73,44 +71,23 @@ M --> B
 | Real-Time | Socket.IO |
 | Charts | Recharts |
 
-
 ## Technology Architecture Diagram
 
 ```mermaid
 graph LR
 
-A[React + Vite]
+A["React + Vite"] --> D["Express.js"]
+B["Tailwind CSS"] --> A
+C["ShadCN UI"] --> A
 
-B[Tailwind CSS]
-
-C[ShadCN UI]
-
-D[Express.js]
-
-E[Node.js]
-
-F[(MongoDB Atlas)]
-
-G[Cloudinary]
-
-H[Socket.IO]
-
-I[JWT Authentication]
-
-J[AI Services]
-
-A --> D
-
-D --> F
-
-D --> G
-
-D --> H
-
-D --> I
-
-D --> J
+D --> E["Node.js"]
+D --> F[("MongoDB Atlas")]
+D --> G["Cloudinary"]
+D --> H["Socket.IO"]
+D --> I["JWT Authentication"]
+D --> J["AI Services"]
 ```
+
 ---
 
 # 4. High-Level System Flow
